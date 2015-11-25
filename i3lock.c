@@ -71,6 +71,7 @@ static bool beep = false;
 bool debug_mode = false;
 static bool dpms = false;
 bool unlock_indicator = true;
+bool unlock_indicator_always = false;
 static bool dont_fork = false;
 struct ev_loop *main_loop;
 static struct ev_timer *clear_pam_wrong_timeout;
@@ -579,6 +580,7 @@ int main(int argc, char *argv[]) {
         {"debug", no_argument, NULL, 0},
         {"help", no_argument, NULL, 'h'},
         {"no-unlock-indicator", no_argument, NULL, 'u'},
+        {"always-unlock-indicator", no_argument, NULL, 'a'},
 #ifndef NOLIBCAIRO
         {"image", required_argument, NULL, 'i'},
         {"tiling", no_argument, NULL, 't'},
@@ -602,7 +604,7 @@ int main(int argc, char *argv[]) {
     if ((username = getenv("USER")) == NULL)
         errx(1, "USER environment variable not set, please set it.\n");
 
-    while ((o = getopt_long(argc, argv, "hvnbdc:p:u"
+    while ((o = getopt_long(argc, argv, "hvnbdc:p:u:a"
 #ifndef NOLIBCAIRO
         "i:t"
 #endif
@@ -633,6 +635,9 @@ int main(int argc, char *argv[]) {
         }
         case 'u':
             unlock_indicator = false;
+            break;
+        case 'a':
+            unlock_indicator_always = true;
             break;
 #ifndef NOLIBCAIRO
         case 'i':
@@ -758,7 +763,7 @@ int main(int argc, char *argv[]) {
 #endif
             break;
         default:
-            errx(1, "Syntax: i3lock [-v] [-n] [-b] [-d] [-c color] [-u] [-p win|default]"
+            errx(1, "Syntax: i3lock [-v] [-n] [-b] [-d] [-c color] [-u] [-a] [-p win|default]"
 #ifndef NOLIBCAIRO
             " [-i image.png] [-t]" // TODO document new options :P
 #else

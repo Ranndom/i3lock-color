@@ -46,6 +46,7 @@ extern uint32_t last_resolution[2];
 
 /* Whether the unlock indicator is enabled (defaults to true). */
 extern bool unlock_indicator;
+extern bool unlock_indicator_always;
 
 #ifndef NOLIBCAIRO
 /* A Cairo surface containing the specified image (-i), if any. */
@@ -213,7 +214,7 @@ xcb_pixmap_t draw_image(uint32_t *resolution) {
                           (strtol(strgroupsb[3], NULL, 16))};
 #endif
 
-    if (unlock_state >= STATE_KEY_PRESSED && unlock_indicator) {
+    if ((unlock_state >= STATE_KEY_PRESSED || unlock_indicator_always) && unlock_indicator) {
         /* Draw a (centered) circle with transparent background. */
         cairo_set_line_width(ctx, 10.0);
         cairo_arc(ctx,

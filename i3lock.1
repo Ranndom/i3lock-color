@@ -27,6 +27,7 @@ i3lock \- improved screen locker
 .RB [\|\-p
 .IR pointer\|]
 .RB [\|\-u\|]
+.RB [\|\-a\|]
 
 .SH DESCRIPTION
 .B i3lock
@@ -76,6 +77,11 @@ Disables the unlock indicator. i3lock will by default show an unlock indicator
 after pressing keys. This will give feedback for every keypress and it will
 show you the current PAM state (whether your password is currently being
 verified or whether it is wrong).
+
+.TP
+.B \-a, \-\-always-unlock-indicator
+Shows the unlock indicator all the time, rather than only when keys are pressed
+(-u or --no-unlock-indicator must not be set for this flag to take effect).
 
 .TP
 .BI \-i\  path \fR,\ \fB\-\-image= path
