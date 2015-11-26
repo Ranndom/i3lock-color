@@ -22,6 +22,7 @@ endif
 LIBS += -lpam
 LIBS += -lev
 LIBS += -lX11
+LIBS += -lm
 
 FILES:=$(wildcard *.c)
 FILES:=$(FILES:.c=.o)

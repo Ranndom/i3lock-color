@@ -16,9 +16,17 @@ typedef enum {
     STATE_PAM_WRONG = 2         /* the password was wrong */
 } pam_state_t;
 
+typedef enum {
+    DRAWMODE_CENTER,
+    DRAWMODE_TILE,
+    DRAWMODE_ZOOM,
+    DRAWMODE_FIT
+} drawmode_t;
+
 xcb_pixmap_t draw_image(uint32_t* resolution);
 void redraw_screen(void);
 void start_clear_indicator_timeout(void);
 void stop_clear_indicator_timeout(void);
+void prerender_background_images(cairo_surface_t* img);
 
 #endif

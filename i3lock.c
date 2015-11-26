@@ -79,8 +79,7 @@ extern unlock_state_t unlock_state;
 extern pam_state_t pam_state;
 
 #ifndef NOLIBCAIRO
-cairo_surface_t *img = NULL;
-bool tile = false;
+drawmode_t drawmode = DRAWMODE_CENTER;
 #endif
 
 /*
@@ -584,6 +583,8 @@ int main(int argc, char *argv[]) {
 #ifndef NOLIBCAIRO
         {"image", required_argument, NULL, 'i'},
         {"tiling", no_argument, NULL, 't'},
+        {"zoom", no_argument, NULL, 'z'},
+        {"fit", no_argument, NULL, 'f'},
 
         /* options for unlock indicator colors */
         // defining a lot of different chars here for the options -- TODO find a nicer way for this, maybe not offering single character options at all
@@ -606,7 +607,7 @@ int main(int argc, char *argv[]) {
 
     while ((o = getopt_long(argc, argv, "hvnbdc:p:u:a"
 #ifndef NOLIBCAIRO
-        "i:t"
+        "i:tzf"
 #endif
         , longopts, &optind)) != -1) {
         switch (o) {
@@ -644,7 +645,13 @@ int main(int argc, char *argv[]) {
             image_path = strdup(optarg);
             break;
         case 't':
-            tile = true;
+            drawmode = DRAWMODE_TILE;
+            break;
+        case 'z':
+            drawmode = DRAWMODE_ZOOM;
+            break;
+        case 'f':
+            drawmode = DRAWMODE_FIT;
             break;
 #endif
         case 'p':
@@ -765,7 +772,7 @@ int main(int argc, char *argv[]) {
         default:
             errx(1, "Syntax: i3lock [-v] [-n] [-b] [-d] [-c color] [-u] [-a] [-p win|default]"
 #ifndef NOLIBCAIRO
-            " [-i image.png] [-t]" // TODO document new options :P
+            " [-i image.png] [-t|-z|-f]" // TODO document new options :P
 #else
             " (compiled with NOLIBCAIRO)"
 #endif
@@ -817,6 +824,7 @@ int main(int argc, char *argv[]) {
 
 
 #ifndef NOLIBCAIRO
+    cairo_surface_t *img = NULL;
     if (image_path) {
         /* Create a pixmap to render on, fill it with the background color */
         img = cairo_image_surface_create_from_png(image_path);
@@ -828,6 +836,9 @@ int main(int argc, char *argv[]) {
             img = NULL;
         }
     }
+
+    prerender_background_images(img);
+    cairo_surface_destroy(img);
 #endif
 
     /* Pixmap on which the image is rendered to (if any) */
